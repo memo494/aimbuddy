@@ -704,7 +704,8 @@ AimController::FingerStep AimController::planFingerStep(int64_t nowNs, const Cam
     // It does not know whether the player's thumb is already turning the camera along with the target.
     // If it is, the two overshoot a little and the feedback below takes the excess back, which leaves the
     // assist helping a runner only a little, where it helps a strafing target a good deal.
-    const float followShare = pursuit.movingShare * std::clamp(0.5f + settings_.strength, 0.0f, 1.0f) * (1.0f - blindness);
+    const float playerYield = lerp(1.0f, settings_.yieldWhileLooking, std::clamp(player.steering, 0.0f, 1.0f));
+    const float followShare = pursuit.movingShare * std::clamp(0.5f + settings_.strength, 0.0f, 1.0f) * (1.0f - blindness) * playerYield;
     step.x += body.velocityX / gainX * dt * followShare;
     step.y += body.velocityY / gainY * dt * followShare * yDirection;
 
@@ -712,7 +713,7 @@ AimController::FingerStep AimController::planFingerStep(int64_t nowNs, const Cam
     // its centre, so the finger comes to rest instead of twitching.
     if (!pursuit.onTarget()) {
         const float shrink = (pursuit.distance - pursuit.deadzone) / pursuit.distance;
-        const float strength = settings_.strength * lerp(1.0f, settings_.yieldWhileLooking, std::clamp(player.steering, 0.0f, 1.0f));
+        const float strength = settings_.strength * playerYield;
         const float timeConstant =
             lerp(kSlowestTimeConstantS, kFastestTimeConstantS, std::pow(std::clamp(strength, 0.0f, 1.0f), 0.7f));
         const float closing = (1.0f - std::exp(-dt / timeConstant)) * stability_ * (1.0f - kBlindClosingLoss * blindness);
@@ -750,8 +751,8 @@ AimController::FingerStep AimController::planFingerStep(int64_t nowNs, const Cam
     // filtering is deliberately stronger, and no invalid detector/gain result can reach dispatch.
     step.x = stableAxisStep(step.x, previousStepX_, settings_.maxFingerStepXPx, settings_.smoothingTimeXS, dt);
     step.y = stableAxisStep(step.y, previousStepY_, settings_.maxFingerStepYPx, settings_.smoothingTimeYS, dt);
-    previousStepX_ = pursuit.onTarget() ? 0.0f : step.x;
-    previousStepY_ = pursuit.onTarget() ? 0.0f : step.y;
+    previousStepX_ = step.x;
+    previousStepY_ = step.y;
     return step;
 }
 
