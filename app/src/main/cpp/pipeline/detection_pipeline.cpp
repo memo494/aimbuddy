@@ -200,10 +200,18 @@ void DetectionPipeline::measureCameraMotion(const RoiFrame& frame) {
     const int64_t lookStartNs = steadyNowNs();
 
     // Where the targets are in this frame, in pixels of the region the odometry is given.
+    // The movers are taken at the newest measured time, not this frame's time, so their boxes come
+    // from measured odometry alone. Extrapolating them with the model/momentum ahead term (which
+    // leans on the very gains this measurement will refine) would feed the estimate back into its own
+    // input. One camera-look interval of staleness is nothing against a mover box's size.
     MovingBox movers[kMaxTracks];
     int moverCount = 0;
     TrackView views[kMaxTracks];
-    const int viewCount = tracker_.snapshot(frame.captureTimeNs, views, kMaxTracks, true);
+    int64_t moverNs = cameraMotion_->measuredUntilNs();
+    if (moverNs <= 0) {
+        moverNs = frame.captureTimeNs;  // no measured history yet (first frames)
+    }
+    const int viewCount = tracker_.snapshot(moverNs, views, kMaxTracks, true);
     const float captureOfScreen = 1.0f / frame.geometry.screenPerCapture();
     for (int i = 0; i < viewCount; ++i) {
         const TrackView& view = views[i];

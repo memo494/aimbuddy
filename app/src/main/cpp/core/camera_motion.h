@@ -60,6 +60,10 @@ public:
     /// Finger travel in pixels that has been moved but whose effect no captured frame shows yet.
     void unseenFinger(float* dx, float* dy) const;
 
+    /// Capture time of the newest measured frame, or 0 when nothing has been measured yet. A shift
+    /// asked up to this instant is measured only, with no model or momentum extrapolation ahead of it.
+    int64_t measuredUntilNs() const;
+
     /**
      * 0 to 1: how much of the last second the picture could not be compared between frames (a bare
      * sky, a scene too busy to read, no frames at all). While it is high, the camera's real answer
@@ -90,6 +94,9 @@ public:
 
 private:
     void modelShift(int64_t fromNs, int64_t toNs, float* dx, float* dy) const;
+
+    /// blindness() without taking the lock, for callers that already hold mutex_.
+    float blindnessLocked(int64_t nowNs) const;
 
     /// How far the player's own turning carries the scene between two instants after the newest frame, going by how it was sliding just before.
     void playerMomentum(int64_t seenUntilNs, int64_t fromNs, int64_t toNs, float* dx, float* dy) const;

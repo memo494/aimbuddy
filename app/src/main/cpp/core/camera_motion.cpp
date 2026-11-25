@@ -201,10 +201,20 @@ void CameraMotion::unseenFinger(float* dx, float* dy) const {
     fingers_.landedBetween(current_.delayS, measured_.latestNs(), kForeverNs, dx, dy);
 }
 
+int64_t CameraMotion::measuredUntilNs() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return measured_.latestNs();
+}
+
 float CameraMotion::blindness(int64_t nowNs) const {
     std::lock_guard<std::mutex> lock(mutex_);
+    return blindnessLocked(nowNs);
+}
+
+float CameraMotion::blindnessLocked(int64_t nowNs) const {
     // Judged over the last second, or over what has been watched so far if that is less. With
     // hardly any history nothing can be said, unless frames came and none could be read.
+    // The caller must hold mutex_ (see blindness() and playerMomentum()).
     if (measured_.empty()) {
         return 0.0f;
     }

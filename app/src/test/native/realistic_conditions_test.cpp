@@ -154,6 +154,29 @@ TEST(the_box_of_a_strafing_target_keeps_up_with_it) {
     CHECK(drawn.missingShare < 0.01);
 }
 
+TEST(the_box_keeps_up_with_an_enemy_while_the_player_pans_with_the_assist_engaged) {
+    // The player sweeps the camera up to 650 px/s while the assist is engaged on a target. The drawn
+    // box must keep up with the enemy through the pan instead of trailing it by the frame age.
+    SimulatedGame::Truth truth = phoneInAMatch();
+    truth.playerTurn = [](float t, float* sx, float* sy) {
+        *sx = 650.0f * std::sin(6.283185f * 0.6f * t);
+        *sy = 0.0f;
+    };
+    SimulatedGame game(truth, baseSettings(), stationary(120.0f, 0.0f));
+    const SimulatedGame::DrawnBoxes drawn = game.judgeDrawnBoxes(10.0f, 2.0f);
+    CHECK(drawn.errorRms < 14.0);
+    CHECK(drawn.missingShare < 0.02);
+}
+
+TEST(the_box_does_not_lead_a_still_target_while_the_assist_works) {
+    // With the assist engaged but no player pan, the box must sit on the still target, not be pushed
+    // ahead of it by momentum that has nothing to carry.
+    SimulatedGame game(phoneInAMatch(), baseSettings(), stationary(120.0f, 0.0f));
+    const SimulatedGame::DrawnBoxes drawn = game.judgeDrawnBoxes(10.0f, 2.0f);
+    CHECK(drawn.errorRms < 8.0);
+    CHECK(drawn.ghostShare < 0.05);
+}
+
 TEST(the_camera_is_calibrated_while_the_player_turns_it_by_hand) {
     // The player swings the camera, up to 700 px/s, and the assist's finger mostly reacts to that swing, so
     // slide and finger travel move together for a reason that has nothing to do with the camera's response.
