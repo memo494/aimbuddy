@@ -1093,7 +1093,7 @@ bool drawAimTab(Settings& s) {
     changed |= menu::Choice(T(Key::AimAfterLanding), &s.aimAfterLanding, afterLanding, 2);
     const char* switching[] = {T(Key::SwitchSticky), T(Key::SwitchBalanced), T(Key::SwitchQuick)};
     changed |= menu::Choice(T(Key::AimSwitching), &s.aimSwitching, switching, 3);
-    changed |= menu::Slider(T(Key::RecoilControl), &s.recoilControl, 0.0f, 600.0f, "%.0f px/s");
+    changed |= menu::Slider(T(Key::RecoilControl), &s.recoilControl, 0.0f, 100.0f, "%.0f px/s");
 
     ImGui::SeparatorText(T(Key::CalibrationTitle));
     ImGui::TextWrapped("%s", T(Key::CalibrationHint));

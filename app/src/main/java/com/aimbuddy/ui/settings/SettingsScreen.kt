@@ -333,7 +333,7 @@ private fun AimGroup(settings: SettingsView, actions: SettingsActions) {
             SliderRow(
                 title = stringResource(R.string.s_recoil_control),
                 value = recoil,
-                range = 0f..600f,
+                range = 0f..100f,
                 valueText = "${recoil.roundToInt()} px/s",
                 onValueChange = { actions.set("recoilControl", it.roundToInt().toString()) },
             )
