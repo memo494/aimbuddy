@@ -215,21 +215,19 @@ void Tracker::correctTrack(Track& track, const Detection& detection) const {
                                                     config_.sizeSnapRatio * track.width.value;
     const bool heightChanged = track.hits > 0 && std::fabs(detection.height - track.height.value) >
                                                      config_.sizeSnapRatio * track.height.value;
-    if (track.hits > 0) {
-        if (widthChanged) {
-            track.width.reset(detection.width, varianceWidth);
-            track.x.reanchor(centerX, varianceX);
-        } else {
-            track.x.update(centerX, varianceX);
-            track.width.update(detection.width, varianceWidth);
-        }
-        if (heightChanged) {
-            track.height.reset(detection.height, varianceHeight);
-            track.y.reanchor(centerY, varianceY);
-        } else {
-            track.y.update(centerY, varianceY);
-            track.height.update(detection.height, varianceHeight);
-        }
+    if (widthChanged) {
+        track.width.reset(detection.width, varianceWidth);
+        track.x.reanchor(centerX, varianceX);
+    } else {
+        track.x.update(centerX, varianceX);
+        track.width.update(detection.width, varianceWidth);
+    }
+    if (heightChanged) {
+        track.height.reset(detection.height, varianceHeight);
+        track.y.reanchor(centerY, varianceY);
+    } else {
+        track.y.update(centerY, varianceY);
+        track.height.update(detection.height, varianceHeight);
     }
 
     if (returning) {

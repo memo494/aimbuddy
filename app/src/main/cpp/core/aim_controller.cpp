@@ -751,8 +751,8 @@ AimController::FingerStep AimController::planFingerStep(int64_t nowNs, const Cam
     // filtering is deliberately stronger, and no invalid detector/gain result can reach dispatch.
     step.x = stableAxisStep(step.x, previousStepX_, settings_.maxFingerStepXPx, settings_.smoothingTimeXS, dt);
     step.y = stableAxisStep(step.y, previousStepY_, settings_.maxFingerStepYPx, settings_.smoothingTimeYS, dt);
-    previousStepX_ = step.x;
-    previousStepY_ = step.y;
+    previousStepX_ = pursuit.onTarget() ? 0.0f : step.x;
+    previousStepY_ = pursuit.onTarget() ? 0.0f : step.y;
     return step;
 }
 
