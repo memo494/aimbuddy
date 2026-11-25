@@ -328,6 +328,16 @@ private fun AimGroup(settings: SettingsView, actions: SettingsActions) {
                 onSelect = { actions.set("aimSwitching", it.toString()) },
             )
         }
+        row {
+            val recoil = settings.float("recoilControl", 0f)
+            SliderRow(
+                title = stringResource(R.string.s_recoil_control),
+                value = recoil,
+                range = 0f..600f,
+                valueText = "${recoil.roundToInt()} px/s",
+                onValueChange = { actions.set("recoilControl", it.roundToInt().toString()) },
+            )
+        }
     }
 }
 

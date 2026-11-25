@@ -721,6 +721,15 @@ AimController::FingerStep AimController::planFingerStep(int64_t nowNs, const Cam
         step.y += pursuit.errorY * shrink / gainY * closing * yDirection;
     }
 
+    // Recoil control: a steady downward drag on the finger while actively engaged on a target, to
+    // counter the view's upward climb during sustained fire. The game's muzzle flash blinds the
+    // scene while shooting, so the climb cannot be measured then and the feedback above cannot
+    // answer it; this open-loop pull does, at a rate the player tunes per weapon. Off (0) by
+    // default, so it changes nothing until the player sets it.
+    if (settings_.recoilControlPxS > 0.0f) {
+        step.y += settings_.recoilControlPxS * dt * yDirection;
+    }
+
     // A speed limit keeps a big error from becoming a sudden flick.
     const float speedShare = lerp(kMinSpeedShare, 1.0f, std::clamp(settings_.strength, 0.0f, 1.0f));
     float allowed = settings_.maxFingerSpeedPxS * speedShare * dt;

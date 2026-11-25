@@ -169,6 +169,7 @@
     <string name="s_chest">胸部</string>
     <string name="s_centre">中心</string>
     <string name="s_strength">强度</string>
+    <string name="s_recoil_control">后坐力控制</string>
     <string name="s_reach">范围</string>
     <string name="s_prefer">选择目标</string>
     <string name="s_nearest">靠近准星</string>

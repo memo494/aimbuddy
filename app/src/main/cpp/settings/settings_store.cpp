@@ -56,6 +56,7 @@ void visitFields(Settings_& s, Visitor&& visit) {
     visit("aimPriority", s.aimPriority);
     visit("aimAfterLanding", s.aimAfterLanding);
     visit("aimSwitching", s.aimSwitching);
+    visit("recoilControl", s.recoilControl);
     visit("autoCalibrate", s.autoCalibrate);
     visit("sceneGain", s.sceneGain);
     visit("actuationDelayMs", s.actuationDelayMs);
@@ -201,6 +202,7 @@ void Settings::clamp() {
     aimPriority = std::clamp(aimPriority, 0, 2);
     aimAfterLanding = std::clamp(aimAfterLanding, 0, 1);
     aimSwitching = std::clamp(aimSwitching, 0, 2);
+    recoilControl = clampTo(recoilControl, 0.0f, 600.0f);
     sceneGain = clampTo(sceneGain, 0.1f, 8.0f);
     actuationDelayMs = clampTo(actuationDelayMs, 0.0f, 250.0f);
     learnedGainX = learnedGainX > 0.0f ? clampTo(learnedGainX, 0.15f, 40.0f) : 0.0f;

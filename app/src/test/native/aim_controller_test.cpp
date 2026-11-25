@@ -116,6 +116,40 @@ TEST(vertical_damping_releases_as_soon_as_the_correction_decelerates) {
     CHECK_NEAR(controller.telemetry().fingerY, yBeforeStop, 0.001f);
 }
 
+TEST(recoil_control_adds_a_downward_drag_while_engaged) {
+    // Same engagement run twice: once with recoil control off, once with it set. The target sits
+    // just below the crosshair, so without the drag the finger settles a little below its anchor;
+    // with the drag it keeps being pulled down past that, countering an upward climb during fire.
+    auto runEngagement = [](float recoilPxS) {
+        AimSettings settings = baseSettings();
+        settings.zone = AimZone::kCenter;
+        settings.anchorRadiusPx = 100000.0f;
+        settings.recoilControlPxS = recoilPxS;
+        CameraMotion motion;
+        motion.setPrior({1.5f, 1.5f, 0.05f, false}, false);
+        AimController controller(settings, &motion);
+        controller.setCrosshair(1200.0f, 525.0f);   // target centre (540) sits 15 px below
+        Tracker tracker;
+        const ModelProfile profile = ModelProfile::defaultsFor(1);
+        for (int i = 0; i < 6; ++i) {
+            Detection d;
+            d.x = 1170.0f;
+            d.y = 450.0f;
+            d.width = 60.0f;
+            d.height = 180.0f;
+            d.score = 0.9f;
+            tracker.update(&d, 1, i * 16 * kMs, nullptr);
+        }
+        for (int i = 0; i < 12; ++i) {
+            controller.step((100 + i * 16) * kMs, tracker, profile, PlayerInput());
+        }
+        return controller.telemetry().fingerY;
+    };
+    const float plain = runEngagement(0.0f);
+    const float withRecoil = runEngagement(400.0f);
+    CHECK(withRecoil > plain + 15.0f);   // the steady drag pulls the finger clearly further down
+}
+
 TEST(a_still_target_within_the_dynamic_deadzone_does_not_start_a_touch) {
     AimSettings settings = baseSettings();
     settings.zone = AimZone::kCenter;

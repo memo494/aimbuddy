@@ -55,6 +55,11 @@ struct AimSettings {
     float lockLossSeconds = 0.15f;      ///< How long a lost target is waited for before letting go.
     float switchRatio = 0.7f;           ///< A rival must be this much closer to take over the lock...
     float switchHoldSeconds = 0.15f;    ///< ...for this long. (Set both together with setSwitching.)
+
+    // --- Recoil control ---
+    float recoilControlPxS = 0.0f;      ///< Steady downward finger drag (finger px/s) while engaged on a target, to
+                                        ///< counter the view's climb during sustained fire. 0 disables it; the player
+                                        ///< tunes it per weapon, since muzzle flash hides the climb from the camera.
 };
 
 /// What the controller wants done with the assist's finger this step.

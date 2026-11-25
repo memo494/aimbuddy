@@ -169,6 +169,7 @@
     <string name="s_chest">Грудь</string>
     <string name="s_centre">Центр</string>
     <string name="s_strength">Сила</string>
+    <string name="s_recoil_control">Контроль отдачи</string>
     <string name="s_reach">Дальность</string>
     <string name="s_prefer">Выбор цели</string>
     <string name="s_nearest">У прицела</string>

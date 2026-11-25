@@ -171,6 +171,7 @@
     <string name="s_chest">Chest</string>
     <string name="s_centre">Centre</string>
     <string name="s_strength">Strength</string>
+    <string name="s_recoil_control">Recoil control</string>
     <string name="s_reach">Reach</string>
     <string name="s_prefer">Target pick</string>
     <string name="s_nearest">Crosshair</string>

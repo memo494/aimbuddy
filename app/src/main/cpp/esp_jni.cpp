@@ -126,6 +126,7 @@ aimbuddy::AimLoopConfig makeAimLoopConfig() {
     config.aim.priority = settings.aimPriority;
     config.aim.afterLanding = static_cast<aimbuddy::AfterLanding>(settings.aimAfterLanding);
     config.aim.setSwitching(static_cast<aimbuddy::Switching>(settings.aimSwitching));
+    config.aim.recoilControlPxS = settings.recoilControl;
     const aimbuddy::TouchArea touchArea = settings.touchAreaOn(displayWidth, displayHeight);
     config.aim.anchorX = touchArea.centerX;
     config.aim.anchorY = touchArea.centerY;
